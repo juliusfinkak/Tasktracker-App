@@ -1,65 +1,266 @@
-import Image from "next/image";
+// "use client"
+// import React from 'react'
+// import Header from './components/Header'
+// import TaskForm from './components/TaskForm'
+// import TaskList from './components/TaskList'
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+// const page = () => {
+//   return (
+//     <div>
+//       <Header />
+//       <TaskForm />
+//       <TaskList/>
+//       <tailwindcss></tailwindcss>
+//     </div>
+//   )
+// }
+
+// export default page;
+
+
+// "use client";
+
+// import { useState } from "react";
+// import Header from "./components/Header";
+// import TaskForm from "./components/TaskForm";
+// import TaskList from "./components/TaskList";
+
+// export default function Page() {
+//   const [tasks, setTasks] = useState([]);
+
+//   const addTask = (text) => {
+//     const newTask = {
+//       id: Date.now(),
+//       text: text,
+//     };
+
+//     setTasks((prevTasks) => [...prevTasks, newTask]);
+//   };
+
+//   const deleteTask = (id) => {
+//     setTasks((prevTasks) =>
+//       prevTasks.filter((task) => task.id !== id)
+//     );
+//   };
+
+//   return (
+//     <main className="min-h-screen bg-slate-50">
+
+//       <Header />
+
+//       <section className="py-4">
+
+//         <TaskForm onAddTask={addTask} />
+
+//         <TaskList
+//           tasks={tasks}
+//           onDeleteTask={deleteTask}
+//         />
+
+//       </section>
+
+//     </main>
+//   );
+// }
+
+
+
+"use client";
+
+import { useState, useEffect } from "react";
+
+import Header from "./components/Header";
+import TaskForm from "./components/TaskForm";
+import TaskList from "./components/TaskList";
+
+export default function Page() {
+
+  const [tasks, setTasks] = useState([]);
+  const [isDark, setIsDark] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load saved data when the application starts
+  useEffect(() => {
+
+    const savedTasks = localStorage.getItem("tasks");
+    const savedTheme = localStorage.getItem("darkMode");
+
+    if (savedTasks) {
+      try {
+        const parsedTasks = JSON.parse(savedTasks);
+
+        if (Array.isArray(parsedTasks)) {
+          setTask(parsedTasks);
+        }
+      } catch {
+        console.error("Could not load saved tasks.");
+      }
+    }
+
+    if (savedTheme !== null) {
+      (savedTheme === "true");
+    }
+
+    (true);
+
+  }, []);
+
+  // Save tasks whenever they change
+  useEffect(() => {
+
+    if (!isLoaded) return;
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  }, [tasks, isLoaded]);
+
+  // Save theme preference
+  useEffect(() => {
+
+    if (!isLoaded) return;
+
+    localStorage.setItem("darkMode", JSON.stringify(isDark));
+
+  }, [isDark, isLoaded]);
+
+  // Add task
+  const addTask = (text, deadline) => {
+
+    const newTask = {
+      id: Date.now() + Math.random(),
+      text,
+      deadline,
+      completed: false,
+    };
+
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+
+  };
+
+  // Delete task
+  const deleteTask = (id) => {
+
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => task.id !== id)
+    );
+
+  };
+
+  // Mark task as completed or pending
+  const toggleTask = (id) => {
+
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    );
+
+  };
+
+  // Edit task
+  const editTask = (id, newText, newDeadline) => {
+
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              text: newText,
+              deadline: newDeadline,
+            }
+          : task
+      )
+    );
+
+  };
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+
+    setIsDark((prev) => !prev);
+
+  };
+
+//   return (
+
+//     <main className={`min-h-screen transition-colors duration-300 ${
+//       isDark ? "bg-slate-950" : "bg-slate-50"
+//     }`}>
+
+//       <Header
+//         isDark={isDark}
+//         toggleDarkMode={toggleDarkMode}
+//       />
+
+//       <TaskForm
+//         onAddTask={addTask}
+//         isDark={isDark}
+//       />
+
+//       <TaskList
+//         tasks={tasks}
+//         onDeleteTask={deleteTask}
+//         onToggleTask={toggleTask}
+//         onEditTask={editTask}
+//         isDark={isDark}
+//       />
+
+//     </main>
+
+//   );
+
+// }
+
+
+return (
+  <main className={`min-h-screen transition-colors duration-300 ${
+    isDark ? "bg-slate-950" : "bg-slate-50"
+  }`}>
+
+    <Header
+      isDark={isDark}
+      toggleDarkMode={toggleDarkMode}
+    />
+
+    <section className="max-w-5xl mx-auto px-5 pt-10">
+
+      <div className="mb-8">
+
+        <p className="text-blue-600 font-semibold text-sm mb-2">
+          YOUR WORKSPACE
+        </p>
+
+        <h2 className={`text-3xl md:text-4xl font-bold ${
+          isDark ? "text-white" : "text-slate-800"
+        }`}>
+          Manage your day.
+        </h2>
+
+        <p className="text-slate-500 mt-2">
+          Organize your tasks and stay productive.
+        </p>
+
+      </div>
+
+    </section>
+
+    <TaskForm
+      onAddTask={addTask}
+      isDark={isDark}
+    />
+
+    <TaskList
+      tasks={tasks}
+      onDeleteTask={deleteTask}
+      onToggleTask={toggleTask}
+      onEditTask={editTask}
+      isDark={isDark}
+    />
+
+  </main>
+);
+
 }
+
